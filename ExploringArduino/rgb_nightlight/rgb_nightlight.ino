@@ -50,35 +50,35 @@ void setMode(int mode)
   //RED
   if (mode == 1)
   {
-    digitalWrite(RLED, HIGH);
-    digitalWrite(GLED, LOW);
-    digitalWrite(BLED, LOW);
+    digitalWrite(RLED, LOW);
+    digitalWrite(GLED, HIGH);
+    digitalWrite(BLED, HIGH);
   }
   //GREEN
   else if (mode == 2)
   {
-    digitalWrite(RLED, LOW);
-    digitalWrite(GLED, HIGH);
-    digitalWrite(BLED, LOW);
+    digitalWrite(RLED, HIGH);
+    digitalWrite(GLED, LOW);
+    digitalWrite(BLED, HIGH);
   }
   //BLUE
   else if (mode == 3)
   {
-    digitalWrite(RLED, LOW);
-    digitalWrite(GLED, LOW);
-    digitalWrite(BLED, HIGH);
+    digitalWrite(RLED, HIGH);
+    digitalWrite(GLED, HIGH);
+    digitalWrite(BLED, LOW);
   }
   //PURPLE (RED+BLUE)
   if (mode == 4)
   {
     analogWrite(RLED, 127);
-    analogWrite(GLED, 0);
+    analogWrite(GLED, 255);
     analogWrite(BLED, 127);
   }
   //TEAL (BLUE+GREEN)
   else if (mode == 5)
   {
-    analogWrite(RLED, 0);
+    analogWrite(RLED, 255);
     analogWrite(GLED, 127);
     analogWrite(BLED, 127);
   }
@@ -87,21 +87,21 @@ void setMode(int mode)
   {
     analogWrite(RLED, 127);
     analogWrite(GLED, 127);
-    analogWrite(BLED, 0);
+    analogWrite(BLED, 255);
   }
   //WHITE (GREEN+RED+BLUE)
   else if (mode == 7)
   {
-    analogWrite(RLED, 85);
-    analogWrite(GLED, 85);
-    analogWrite(BLED, 85);
+    analogWrite(RLED, 127);
+    analogWrite(GLED, 127);
+    analogWrite(BLED, 127);
   }
   //OFF (mode = 0)
   else
   {
-    digitalWrite(RLED, LOW);
-    digitalWrite(GLED, LOW);
-    digitalWrite(BLED, LOW);
+    digitalWrite(RLED, HIGH);
+    digitalWrite(GLED, HIGH);
+    digitalWrite(BLED, HIGH);
   }
 }
 
