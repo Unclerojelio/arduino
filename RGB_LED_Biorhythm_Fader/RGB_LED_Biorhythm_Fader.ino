@@ -22,29 +22,31 @@ float x;
 
 void setup() {    
 
-  // Initialize the digital pins as outputs.
+  //Initialize the digital pins as outputs.
   pinMode(RED_PIN,   OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(BLUE_PIN,  OUTPUT);
   
   // Run a diagnostic test that will verify that each color of LED is working.
-  digitalWrite(RED_PIN,   LOW);
-  digitalWrite(GREEN_PIN, LOW);
-  digitalWrite(BLUE_PIN,  LOW);
-  
-  digitalWrite(RED_PIN,   HIGH);  
-  delay(1000);
-  digitalWrite(RED_PIN,   LOW);
+  digitalWrite(RED_PIN,   HIGH);
   digitalWrite(GREEN_PIN, HIGH);
-  delay(1000);
-  digitalWrite(GREEN_PIN, LOW);
   digitalWrite(BLUE_PIN,  HIGH);
+  
+  digitalWrite(RED_PIN,   LOW);  
   delay(1000);
+  digitalWrite(RED_PIN,   HIGH);
+  digitalWrite(GREEN_PIN, LOW);
+  delay(1000);
+  digitalWrite(GREEN_PIN, HIGH);
+  digitalWrite(BLUE_PIN,  LOW);
+  delay(1000);
+
+  //Serial.begin(9600);
 }
 
 void loop() {
 
-  // 21252 is the LCD of {23,28,33}
+  //21252 is the LCD of {23,28,33}
   for (long i = 0; i < 21251; i++) {
   
     // Convert i into a floating point variable that can be used with PI
@@ -62,5 +64,13 @@ void loop() {
     analogWrite (BLUE_PIN,  BLUE_VALUE);
     
     delay(100);
+
+//    Serial.print(i);
+//    Serial.print("\t");
+//    Serial.print(RED_VALUE);
+//    Serial.print("\t");
+//    Serial.print(GREEN_VALUE);
+//    Serial.print("\t");
+//    Serial.println(BLUE_VALUE);
   }
 }
