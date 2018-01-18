@@ -9,6 +9,11 @@ Sensors used:
   RPM:     IR Obstacle Avoidance Sensor Module, ST-1081, from Iduino
   Voltage: Voltage Dividor using discrete 12K and 2K 1% resistors
   Current:
+
+Todo:
+  1) Add current sensor
+  2) Add servo control to control ESC
+  3) Add data logging
 */
 
 // include the library code:
@@ -27,10 +32,9 @@ int batMonPin = A4;         // input pin for the voltage divider
 int batVal = 0;             // variable for the A/D value
 float pinVoltage = 0;       // variable to hold the calculated voltage
 float batteryVoltage = 0;   // final calculated battery voltage
-int seconds = 0;            // will contain the number of seconds to display
-int minutes = 0;            // will contain the number of minutes to display
-volatile byte breakNum;        // "volatile" is used with interrupts
-unsigned int rpm;
+volatile byte breakNum;     // "volatile" is used with interrupts
+unsigned int rpm;           // contains the calculated revolutions per minute adjusted for the number of propeller blades
+String timeStr;             // contains the formatted time string
 
 // Counts the number of interrupts
 void break_count()
@@ -38,15 +42,31 @@ void break_count()
     breakNum++;
 }
 
+// Returns the current millis in "00:00" format
+String millis2String(long int currentMillis)
+{
+  //Serial.println(currentMillis);
+  String tempStr = "";
+  int seconds = (currentMillis / 1000) % 60;
+  int minutes = (currentMillis / 1000) / 60;
+  if (minutes < 10)
+    tempStr = tempStr + "0";
+  tempStr = tempStr + String(minutes);
+  tempStr = tempStr + ":";
+  if (seconds < 10)
+    tempStr = tempStr + "0";
+  tempStr = tempStr + String(seconds);
+  return tempStr;
+}
+
+
 void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
-  // Print a message to the LCD.
-  lcd.print("RPM=");
-  lcd.setCursor(9,0);
-  lcd.print("A=");
-  lcd.setCursor(9,1);
-  lcd.print("V=");
+
+  //Setup serial monitor and column headers 
+  Serial.begin(9600);
+  Serial.println("Time\tVolts\tRPM");
 
   //The Infrared phototransistor is connected to pin 2 which is interrupt 0.
   //Triggers on change from HIGH to LOW
@@ -61,6 +81,14 @@ void loop() {
   // Don't process interrupts during calculations
   detachInterrupt(0);
 
+  //Clear LCD and print labels
+  lcd.clear();
+  lcd.print("RPM=");
+  lcd.setCursor(9,0);
+  lcd.print("A=");
+  lcd.setCursor(9,1);
+  lcd.print("V=");
+
   // Depending on what you are testing you might need to change the formula for the rpm
   // For instance testing a prop would give 2 breaks per rotation so (60 * rpmcount) / 2
   rpm = (60 * breakNum);
@@ -69,33 +97,26 @@ void loop() {
 
   // Print rpm in RPM field
   lcd.setCursor(4,0);
-  lcd.print("0000");
-  if(rpm < 100) lcd.setCursor(6,0);
-  else if (rpm < 1000) lcd.setCursor(5,0);
-  else lcd.setCursor(4,0);
   lcd.print(rpm);
    
   // set the cursor to time field
   lcd.setCursor(0, 1);
   // print, with leading zeros, the elapsed time since reset
-  seconds = (millis() / 1000) % 60;
-  minutes = (millis() / 1000) / 60;
-  if (minutes < 10)
-    lcd.print(0);
-  lcd.print(minutes);
-  lcd.print(":");
-  if (seconds < 10)
-    lcd.print(0);
-  lcd.print(seconds);
-  //lcd.print(millis() / 1000);
+  timeStr = millis2String(millis());
+  lcd.print(timeStr);
   
   batVal = analogRead(batMonPin);    // read the voltage on the divider
-  pinVoltage = batVal * .00488;
-  batteryVoltage = pinVoltage * 6;
+  pinVoltage = batVal * .00488;      // map 0-1023 to 0-5V
+  batteryVoltage = pinVoltage * 6;   // multiply by the voltage divider ratio
   lcd.setCursor(12,1);
   lcd.print(batteryVoltage);
+
+  Serial.print(timeStr);
+  Serial.print("\t");
+  Serial.print(batteryVoltage);
+  Serial.print("\t");
+  Serial.println(rpm);
 
   //Restart the interrupt processing
   attachInterrupt(0, break_count, FALLING);
 }
-
