@@ -25,13 +25,17 @@ LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
 // Pin assignments
 int batMonPin = A4;         // input pin for the voltage divider
+int currentSensePin = A3;   // input pin for the ACS711EX Current Sensor
 //int irLED = 13;           // The infrared LED is connected to digital pin 13. Not used now but might use later
                             // if I switch from the IR module to separate IRLED and IR Phototransistor.
 
 // Variable declarations
 int batVal = 0;             // variable for the A/D value
-float pinVoltage = 0;       // variable to hold the calculated voltage
+float pinVoltage = 0;       // variable to hold the calculated voltage of the voltage sensor pin
+float currentPinVoltage = 0 // variable to hold the calculated voltage of the current sensor pin
 float batteryVoltage = 0;   // final calculated battery voltage
+float battertCurrent = 0;   // final calculated battery current
+int Vcc = 5;
 volatile byte breakNum;     // "volatile" is used with interrupts
 unsigned int rpm;           // contains the calculated revolutions per minute adjusted for the number of propeller blades
 String timeStr;             // contains the formatted time string
@@ -105,15 +109,24 @@ void loop() {
   timeStr = millis2String(millis());
   lcd.print(timeStr);
   
-  batVal = analogRead(batMonPin);    // read the voltage on the divider
-  pinVoltage = batVal * .00488;      // map 0-1023 to 0-5V
-  batteryVoltage = pinVoltage * 6;   // multiply by the voltage divider ratio
+  batVal = analogRead(batMonPin);       // read the output of the voltage sense A/D
+  pinVoltage = batVal * .00488;         // map 0-1023 to 0-5V to calculate the voltage at the divider
+  batteryVoltage = pinVoltage * 6;      // multiply by the voltage divider ratio
+  batVal = analogRead(currentSensePin); // read the output of the current sense A/D
+  currentPinVoltage = batVal * .00488;  // map 0-1023 to 0-5V to calculate the output voltage of the current sensor
+  batteryCurrent = 73.3 * currentPinVoltage/Vcc - 36.7 // calculate final battery current
+  
   lcd.setCursor(12,1);
   lcd.print(batteryVoltage);
+
+  lcd.setCursor(12,0);
+  lcd.print(batteryCurrent);
 
   Serial.print(timeStr);
   Serial.print("\t");
   Serial.print(batteryVoltage);
+  Serial.print("\t");
+  Serial.print(batteryCurrent);
   Serial.print("\t");
   Serial.println(rpm);
 
