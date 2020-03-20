@@ -16,6 +16,8 @@
 #define F 0x47 //Seven segment encoding for character
 #define BLANK 0x00
 
+int numbers[] = {0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0};
+
 void initialise()
 {
   digitalWrite(MAX7219_CS, HIGH);
@@ -76,11 +78,24 @@ void setup() {
   output(0x03, C);
   output(0x02, B);
   output(0x01, A); //digit 0 (rightmost digit) data
-  
+
+  output(0x08, 0x00);
+  output(0x07, 0x00);
+  output(0x06, 0x00);
+  output(0x05, 0x00);
+  output(0x04, 0x00);
+  output(0x03, 0x00);
+  output(0x02, 0x00);
+  output(0x01, 0x00);
+
+  for(int i = 0; i <= 7; i++) {
+    output(i+1, numbers[i]);
+  }
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   //blink();
-  scroll_right();
+  //scroll_right();
 }
