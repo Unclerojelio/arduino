@@ -25,6 +25,18 @@
 //       |  |  |  |  |
 //       8  6  G  7  N    <-- Arduino pins
 //                   C
+//
+// ATTiny24/44/84 Microcontroller
+//
+//                           +-\/-+
+//                     VCC  1|    |14  GND
+//             (D  0)  PB0  2|    |13  AREF (D 10)
+//             (D  1)  PB1  3|    |12  PA1  (D  9) 
+//                     PB3  4|    |11  PA2  (D  8) 
+//  PWM  INT0  (D  2)  PB2  5|    |10  PA3  (D  7) 
+//  PWM        (D  3)  PA7  6|    |9   PA4  (D  6) 
+//  PWM        (D  4)  PA6  7|    |8   PA5  (D  5)        PWM
+//                           +—--—+
 
 // Array of bitmasks encoding indivudual segements needed on the dispaly to represent the number at the array index
 byte numbers[] = {B11111100,  //0
