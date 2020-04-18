@@ -40,6 +40,8 @@
 //  PWM  MOSI    (D6)  PA6  7|    |8   PA5  (D5) MOSI   PWM
 //                           +—--—+
 
+int n = 0;
+
 // Array of bitmasks encoding indivudual segements needed on the display to represent the number at the array index
 byte numbers[] = {B11111100,  //0
                   B01100000,  //1
@@ -73,16 +75,33 @@ byte output_number(byte n) {
   digitalWrite(6, B00000010 & num); //g
 }
 
+int input_number() {
+  int val = 0;
+  int n = 0;
+  val = digitalRead(7);
+  if(val) n += 1;
+  val = digitalRead(8);
+  if(val) n += 2;
+  val = digitalRead(9);
+  if(val) n += 4;
+  val = digitalRead(10);
+  if(val) n += 8;
+  return n;
+}
+
 void setup() {
 
   // Setup pins 0-6 for output
   for (int i = 0; i <= 6; i++) pinMode(i, OUTPUT);
+  for (int i = 7; i <= 10; i++) pinMode(i, INPUT);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  for (byte i=0; i < 16; i++) {
-    output_number(i);
-    delay(1000);
-  }
+  n = input_number();
+  output_number(n);
+  //for (byte i=0; i < 16; i++) {
+  //  output_number(i);
+  //}
+  //delay(1000);
 }
