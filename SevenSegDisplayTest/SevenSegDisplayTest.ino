@@ -7,6 +7,10 @@
 // 2020 04 15
 //
 // 2020 04 17: Code loaded on ATTiny24 and driving display
+// 2020 04 18: Code reads input and outputs value to display
+//
+// TODO:
+//        Use direct port manipulation to save program space.
 //
 // FND503 Common Cathod Seven Segment Display
 //
