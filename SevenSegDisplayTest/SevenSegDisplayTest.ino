@@ -91,9 +91,11 @@ byte output_number(byte n) {
   digitalWrite(PA6, B00000010 & num); //g
 }
 
+// This function reads the values on the input pins and then accumulates
+// them as binary numbers into a decimal value. The decimal value is returned.
 byte input_number() {
-  byte val = 0;
-  byte n = 0;
+  byte val = 0;                  // value read on pin
+  byte n = 0;                    // return value accumulator
   val = digitalRead(PA7);
   if(val) n += 1;
   val = digitalRead(PB2);
@@ -106,18 +108,13 @@ byte input_number() {
 }
 
 void setup() {
-
   // Setup pins 0-6 for output
   for (int i = 0; i <= 6; i++) pinMode(i, OUTPUT);
+  // Setup pins 7-10 for input
   for (int i = 7; i <= 10; i++) pinMode(i, INPUT);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   n = input_number();
   output_number(n);
-  //for (byte i=0; i < 16; i++) {
-  //  output_number(i);
-  //}
-  //delay(1000);
 }
