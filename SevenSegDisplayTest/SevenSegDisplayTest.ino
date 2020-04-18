@@ -32,7 +32,7 @@
 //
 //                           +-\/-+
 //                     VCC  1|    |14  GND
-//              (D10)  PB0  2|    |13  AREF (D0)
+//              (D10)  PB0  2|    |13  PA0  (D0) AREF
 //               (D9)  PB1  3|    |12  PA1  (D1) 
 //        RST          PB3  4|    |11  PA2  (D2) 
 //  PWM  INT0    (D8)  PB2  5|    |10  PA3  (D3) 
@@ -40,7 +40,19 @@
 //  PWM  MOSI    (D6)  PA6  7|    |8   PA5  (D5) MOSI   PWM
 //                           +—--—+
 
-int n = 0;
+#define PA0  0
+#define PA1  1
+#define PA2  2
+#define PA3  3
+#define PA4  4
+#define PA5  5
+#define PA6  6
+#define PA7  7
+#define PB2  8
+#define PB1  9
+#define PB0 10
+
+byte n = 0;
 
 // Array of bitmasks encoding indivudual segements needed on the display to represent the number at the array index
 byte numbers[] = {B11111100,  //0
@@ -66,25 +78,25 @@ byte numbers[] = {B11111100,  //0
 byte output_number(byte n) {
 
   byte num = numbers[n];
-  digitalWrite(0, B10000000 & num); //a
-  digitalWrite(1, B01000000 & num); //b
-  digitalWrite(2, B00100000 & num); //c
-  digitalWrite(3, B00010000 & num); //d
-  digitalWrite(4, B00001000 & num); //e
-  digitalWrite(5, B00000100 & num); //f
-  digitalWrite(6, B00000010 & num); //g
+  digitalWrite(PA0, B10000000 & num); //a
+  digitalWrite(PA1, B01000000 & num); //b
+  digitalWrite(PA2, B00100000 & num); //c
+  digitalWrite(PA3, B00010000 & num); //d
+  digitalWrite(PA4, B00001000 & num); //e
+  digitalWrite(PA5, B00000100 & num); //f
+  digitalWrite(PA6, B00000010 & num); //g
 }
 
-int input_number() {
-  int val = 0;
-  int n = 0;
-  val = digitalRead(7);
+byte input_number() {
+  byte val = 0;
+  byte n = 0;
+  val = digitalRead(PA7);
   if(val) n += 1;
-  val = digitalRead(8);
+  val = digitalRead(PB2);
   if(val) n += 2;
-  val = digitalRead(9);
+  val = digitalRead(PB1);
   if(val) n += 4;
-  val = digitalRead(10);
+  val = digitalRead(PB0);
   if(val) n += 8;
   return n;
 }
