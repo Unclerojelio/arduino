@@ -5,24 +5,34 @@
 // 2010 04 21
 //
 
-sr = []
+int sr[16];
+int temp;
+
+void shift_right() {
+  for(int i = 3; i > 0; i--) {
+    sr[i] = sr[i-1];
+  }
+}
 
 void setup() {
+  Serial.begin(9600);
   // put your setup code here, to run once:
   for(int i = 2; i <=5; i++) pinMode(i, OUTPUT);
-  for(int i = 0; i <= 3; i++) {
-    sr[i] = pow(2, i);
+  for(int i = 3; i >= 0; i--) {
+    sr[i] = 1<<i;
+    //Serial.println(sr[i]);
   }
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  for(byte x = 0; x < 16; x++) {
-    digitalWrite(2, x & B0001);
-    digitalWrite(3, x & B0010);
-    digitalWrite(4, x & B0100);
-    digitalWrite(5, x & B1000);
-    delay(1000);
-  }
-
+  temp = sr[2] ^ sr[3];
+  shift_right();
+  sr[0] = temp;
+  Serial.println(temp);
+  digitalWrite(2, temp & B0001);
+  digitalWrite(3, temp & B0010);
+  digitalWrite(4, temp & B0100);
+  digitalWrite(5, temp & B1000);
+  delay(500);
 }
