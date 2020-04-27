@@ -2,7 +2,7 @@
 // Linear Feedback Shift Register
 //
 // Roger Banks
-// 2010 04 21
+// 2020 04 21
 //
 
 int sr[16];
