@@ -44,20 +44,6 @@
 //  PWM  MOSI    (D6)  PA6  7|    |8   PA5  (D5) MOSI   PWM
 //                           +—--—+
 
-#define PA0  0
-#define PA1  1
-#define PA2  2
-#define PA3  3
-#define PA4  4
-#define PA5  5
-#define PA6  6
-#define PA7  7
-#define PB2  8
-#define PB1  9
-#define PB0 10
-
-byte n = 0;
-
 // Array of bitmasks encoding indivudual segements needed on the display to represent the number at the array index
 byte numbers[] = {B11111100,  //0
                   B01100000,  //1
@@ -78,52 +64,34 @@ byte numbers[] = {B11111100,  //0
 
 // This function takes a number as it's input and then turns on the appropriate pins to represent
 // that number on the display.
-// A better programmer would do this with a loop and some bit shifting.
 byte output_number(byte n) {
 
   byte num = numbers[n];
-  //digitalWrite(PA0, B10000000 & num); //a
-  PORTA =  (B10000000 & num) >> 7;
-  //digitalWrite(PA1, B01000000 & num); //b
-  PORTA |= (B01000000 & num) >> 5;
-  //digitalWrite(PA2, B00100000 & num); //c
-  PORTA |= (B00100000 & num) >> 3;
-  //digitalWrite(PA3, B00010000 & num); //d
-  PORTA |= (B00010000 & num) >> 1;
-  //digitalWrite(PA4, B00001000 & num); //e
-  PORTA |= (B00001000 & num) << 1;
-  //digitalWrite(PA5, B00000100 & num); //f
-  PORTA |= (B00000100 & num) << 3;
-  //digitalWrite(PA6, B00000010 & num); //g
-  PORTA |= (B00000010 & num) << 5;
+  PORTA =  (B10000000 & num) >> 7; //a
+  PORTA |= (B01000000 & num) >> 5; //b
+  PORTA |= (B00100000 & num) >> 3; //c
+  PORTA |= (B00010000 & num) >> 1; //d
+  PORTA |= (B00001000 & num) << 1; //e
+  PORTA |= (B00000100 & num) << 3; //f
+  PORTA |= (B00000010 & num) << 5; //g
 }
 
 // This function reads the values on the input pins and then accumulates
 // them as binary numbers into a decimal value. The decimal value is returned.
 byte input_number() {
-  byte val = 0;                  // value read on pin
   byte n = 0;                    // return value accumulator
-  val = digitalRead(PA7);
-  if(val) n += 1;
-  val = digitalRead(PB2);
-  if(val) n += 2;
-  val = digitalRead(PB1);
-  if(val) n += 4;
-  val = digitalRead(PB0);
-  if(val) n += 8;
+  if(PINA & (1<<PA7)) n += 1;
+  if(PINB & (1<<PB2)) n += 2;
+  if(PINB & (1<<PB1)) n += 4;
+  if(PINB & (1<<PB0)) n += 8;
   return n;
 }
 
 void setup() {
-  // Setup pins 0-6 for output
-  //for (int i = 0; i <= 6; i++) pinMode(i, OUTPUT);
-  DDRA = 0b01111111;
-  // Setup pins 7-10 for input
-  //for (int i = 7; i <= 10; i++) pinMode(i, INPUT);
-  DDRB = 0b00000000;
+  DDRA = 0b01111111; // Setup PORTA bits 0-6 for output, bit 7 for input
+  DDRB = 0b00000000; // Setup PORTB for input
 }
 
 void loop() {
-  n = input_number();
-  output_number(n);
+  output_number(input_number());
 }
