@@ -109,9 +109,11 @@ byte input_number() {
 
 void setup() {
   // Setup pins 0-6 for output
-  for (int i = 0; i <= 6; i++) pinMode(i, OUTPUT);
+  //for (int i = 0; i <= 6; i++) pinMode(i, OUTPUT);
+  DDRA = 0b01111111;
   // Setup pins 7-10 for input
-  for (int i = 7; i <= 10; i++) pinMode(i, INPUT);
+  //for (int i = 7; i <= 10; i++) pinMode(i, INPUT);
+  DDRB = 0b00000000;
 }
 
 void loop() {
