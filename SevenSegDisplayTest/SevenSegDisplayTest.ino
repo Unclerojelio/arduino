@@ -82,13 +82,20 @@ byte numbers[] = {B11111100,  //0
 byte output_number(byte n) {
 
   byte num = numbers[n];
-  digitalWrite(PA0, B10000000 & num); //a
-  digitalWrite(PA1, B01000000 & num); //b
-  digitalWrite(PA2, B00100000 & num); //c
-  digitalWrite(PA3, B00010000 & num); //d
-  digitalWrite(PA4, B00001000 & num); //e
-  digitalWrite(PA5, B00000100 & num); //f
-  digitalWrite(PA6, B00000010 & num); //g
+  //digitalWrite(PA0, B10000000 & num); //a
+  PORTA =  (B10000000 & num) >> 7;
+  //digitalWrite(PA1, B01000000 & num); //b
+  PORTA |= (B01000000 & num) >> 5;
+  //digitalWrite(PA2, B00100000 & num); //c
+  PORTA |= (B00100000 & num) >> 3;
+  //digitalWrite(PA3, B00010000 & num); //d
+  PORTA |= (B00010000 & num) >> 1;
+  //digitalWrite(PA4, B00001000 & num); //e
+  PORTA |= (B00001000 & num) << 1;
+  //digitalWrite(PA5, B00000100 & num); //f
+  PORTA |= (B00000100 & num) << 3;
+  //digitalWrite(PA6, B00000010 & num); //g
+  PORTA |= (B00000010 & num) << 5;
 }
 
 // This function reads the values on the input pins and then accumulates
