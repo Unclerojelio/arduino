@@ -5,6 +5,11 @@
 // 2020 10 01
 //
 // Need to add actual actual feedback code. The sketch is currently just shifting in random numbers.
+// Algorithm:
+//  1) Shift the required bits( 32, 22, 2, 1) out to four variables (bit_32, bit_22, bit_2, bit_1).
+//  2) theFeedback = bit_32 ^ bit_22 ^ bit_2 ^ bit_1
+//  3) Shift theNumber one bit to the left.
+//  4) theNumber = theNumber + theFeedback
 
 
 //We always have to include the library
