@@ -1,4 +1,5 @@
-// This sketch generates a 24 bit LFSR and then sends the data out as 3 8 bit values to a WS2812 LED strip.
+// This sketch generates a 24 bit LFSR and then sends the data out as 3 8 bit values to a WS2812 LED strip. The result
+// is a pseudo-random sequence of colors that shift down the LED strip.
 //
 // Roger Banks
 // 2020 10 11
@@ -20,11 +21,13 @@ unsigned int bit_24, bit_23, bit_22, bit_17, bit_0;
 unsigned int redValue, greenValue, blueValue;
 
 void setup() {
-	// sanity check delay - allows reprogramming if accidently blowing power w/leds
- 	delay(2000);
+  // sanity check delay - allows reprogramming if accidently blowing power w/leds
+  delay(2000);
+  set_max_power_in_volts_and_milliamps(5, 3000);            // This particular setup can deliver 3A at 5V. Do not run this
+                                                            // directly from a USB port without lowering the brightness or
+                                                            // number of LEDs.
+  set_max_power_indicator_LED(LED_BUILTIN);                 // Flash the builtin LED if the brightness is being lowered.
   FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical
-  //leds[0].setRGB(255, 0, 0);
-  //FastLED.show();
 }
 
 void loop() {
@@ -35,18 +38,18 @@ void loop() {
   bit_22 =  theNumber << 2  >> 23;
   bit_17  = theNumber << 7  >> 23;
   
-  bit_0 = bit_24 ^ bit_23 ^ bit_22 ^ bit_17; // the feedback function
-  theNumber += bit_0; // insert the feeedback back into the shift regsiter
+  bit_0 = bit_24 ^ bit_23 ^ bit_22 ^ bit_17;   // the feedback function
+  theNumber += bit_0;                          // insert the feeedback back into the shift regsiter
 
   // extract the RGB values from the shift register
   redValue   = theNumber       >> 16;
   greenValue = theNumber << 8  >> 16;
   blueValue  = theNumber << 16 >> 16;
   
-  // move the LED values down the strip one place
-  for(int whiteLed = NUM_LEDS-2; whiteLed >= 0; whiteLed--) {
-    leds[whiteLed+1] = leds[whiteLed];
-    }
+  // shift the LED colors down the strip by one pixel
+  for(int currentLed = NUM_LEDS-2; currentLed >= 0; currentLed--) {
+    leds[currentLed+1] = leds[currentLed];
+  }
 
   // set the first LED with the new color values
   leds[0].setRGB(redValue, greenValue, blueValue);
