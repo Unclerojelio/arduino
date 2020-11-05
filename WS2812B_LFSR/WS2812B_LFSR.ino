@@ -17,7 +17,7 @@ CRGB leds[NUM_LEDS];
 unsigned long delaytime=250; // delay between updates
 unsigned long theNumber = 1; // The actual shift register. Initialize with a 1 otherwise the LFSR will only contain zeros.
 
-unsigned int bit_24, bit_23, bit_22, bit_17, bit_0;
+unsigned int bit_24, bit_23, bit_22, bit_17, bit_1;        // Historically, shift registers are numbered 1-N
 unsigned int redValue, greenValue, blueValue;
 
 void setup() {
@@ -38,9 +38,13 @@ void loop() {
   bit_22 =  theNumber << 2  >> 23;
   bit_17  = theNumber << 7  >> 23;
   
-  bit_0 = bit_24 ^ bit_23 ^ bit_22 ^ bit_17;   // the feedback function
-  theNumber += bit_0;                          // insert the feeedback back into the shift regsiter
+  bit_1 = bit_24 ^ bit_23 ^ bit_22 ^ bit_17;   // the feedback function
+  bit_1 = bit_1 & 1;
+  
+  theNumber = theNumber << 1;                  // shift the register by 1
+  theNumber += bit_1;                          // insert the feeedback back into the shift register
 
+  // this is incorrect. the values need to be bytes in order to be the correct 8 bit values.
   // extract the RGB values from the shift register
   redValue   = theNumber       >> 16;
   greenValue = theNumber << 8  >> 16;
@@ -52,9 +56,11 @@ void loop() {
   }
 
   // set the first LED with the new color values
-  leds[0].setRGB(redValue, greenValue, blueValue);
+  //leds[0].setRGB(redValue, greenValue, blueValue);
+
+  if(bit_1) leds[0] = CRGB::White;
+  else leds[0] = CRGB::Black;
   
   FastLED.show(); 
   delay(delaytime);
-  theNumber = theNumber << 1; // shift the register by 1
 }
