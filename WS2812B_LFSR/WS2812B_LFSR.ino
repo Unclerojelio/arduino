@@ -18,7 +18,7 @@ unsigned long delaytime=250; // delay between updates
 unsigned long theNumber = 1; // The actual shift register. Initialize with a 1 otherwise the LFSR will only contain zeros.
 
 unsigned int bit_24, bit_23, bit_22, bit_17, bit_1;        // Historically, shift registers are numbered 1-N
-unsigned int redValue, greenValue, blueValue;
+byte redValue, greenValue, blueValue;                      // storage for the RGB colors
 
 void setup() {
   // sanity check delay - allows reprogramming if accidently blowing power w/leds
@@ -44,23 +44,28 @@ void loop() {
   theNumber = theNumber << 1;                  // shift the register by 1
   theNumber += bit_1;                          // insert the feeedback back into the shift register
 
-  // this is incorrect. the values need to be bytes in order to be the correct 8 bit values.
   // extract the RGB values from the shift register
-  redValue   = theNumber       >> 16;
-  greenValue = theNumber << 8  >> 16;
-  blueValue  = theNumber << 16 >> 16;
+  redValue   = theNumber >> 16;
+  greenValue = theNumber >> 8;
+  blueValue  = theNumber;
   
   // shift the LED colors down the strip by one pixel
   for(int currentLed = NUM_LEDS-2; currentLed >= 0; currentLed--) {
     leds[currentLed+1] = leds[currentLed];
   }
 
-  // set the first LED with the new color values
-  //leds[0].setRGB(redValue, greenValue, blueValue);
+  //This section outputs a pseudo-random sequence of colors that represent the current content of the LFSR.
+  // Uncomment either this section of code or the one below.
+  //set the first LED with the new color values
+  leds[0].setRGB(redValue, greenValue, blueValue);
 
+/*
+  //This code outputs a stream of bits representing the LFSR. Uncomment either this
+  section or the one above.
   if(bit_1) leds[0] = CRGB::White;
   else leds[0] = CRGB::Black;
-  
+*/
+
   FastLED.show(); 
   delay(delaytime);
 }
